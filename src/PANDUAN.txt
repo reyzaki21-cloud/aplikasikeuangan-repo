@@ -1,0 +1,9 @@
+PANDUAN PENGGUNAAN APLIKASI KEUANGAN
+
+1. Clone atau download repository ini.
+2. Buka project menggunakan IDE yang digunakan (misalnya NetBeans atau VS Code).
+3. Jalankan aplikasi.
+4. Gunakan menu yang tersedia untuk mengelola data keuangan.
+5. Simpan perubahan yang dilakukan.
+
+Repository ini dibuat sebagai tugas/project Aplikasi Keuangan.
