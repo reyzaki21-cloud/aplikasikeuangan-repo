@@ -1,239 +1,116 @@
-from datetime import datetime
+import csv
 
-transaksi = []
-anggaran = {}
+FILE = 'data_keuangan.csv'
 
-def format_rupiah(nominal):
-    # Mengubah angka menjadi format Rupiah dengan pemisah ribuan titik
-    return f"Rp{int(nominal):,}".replace(",", ".")
+def load_data():
+    data = []
+    try:
+        with open(FILE, mode='r', newline='') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                row['jumlah'] = int(row['jumlah'])
+                data.append(row)
+    except FileNotFoundError:
+        with open(FILE, mode='w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=['tanggal', 'jenis', 'jumlah', 'kategori', 'deskripsi'])
+            writer.writeheader()
+    return data
 
-def atur_anggaran():
-    print("\n=== ATUR ANGGARAN KATEGORI ===")
-    kategori = input("Masukkan nama kategori pengeluaran: ").strip().lower()
-    nominal = float(input(f"Masukkan batas anggaran untuk kategori '{kategori}': "))
-    
-    anggaran[kategori] = nominal
-    print(f"Anggaran untuk kategori '{kategori.capitalize()}' berhasil diatur sebesar {format_rupiah(nominal)}!")
+def save_data(data):
+    with open(FILE, mode='w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=['tanggal', 'jenis', 'jumlah', 'kategori', 'deskripsi'])
+        writer.writeheader()
+        for row in data:
+            writer.writerow(row)
 
-def cek_anggaran():
-    print("\n===== STATUS ANGGARAN =====")
-    
-    if not anggaran:
-        print("Belum ada anggaran yang diatur.")
+def tambah_transaksi(data):
+    tanggal = input("Tanggal (YYYY-MM-DD): ")
+    jenis = input("Jenis (pemasukan/pengeluaran): ")
+    try:
+        jumlah = int(input("Jumlah: "))
+    except ValueError:
+        print("Jumlah harus berupa angka.")
         return
-
-    pengeluaran_per_kategori = {}
-    for data in transaksi:
-        if data["jenis"] == "Pengeluaran":
-            kat = data["kategori"].lower()
-            pengeluaran_per_kategori[kat] = pengeluaran_per_kategori.get(kat, 0) + data["jumlah"]
-
-    for kategori, batas_anggaran in anggaran.items():
-        terpakai = pengeluaran_per_kategori.get(kategori, 0)
-        
-        print(f"\nKategori : {kategori.capitalize()}")
-        print(f"Anggaran : {format_rupiah(batas_anggaran)}")
-        print(f"Terpakai : {format_rupiah(terpakai)}")
-        
-        if terpakai > batas_anggaran:
-            print("⚠ PERINGATAN! Anggaran telah terlampaui.")
-        elif terpakai >= (batas_anggaran * 0.8):
-            print("⚠ Hati-hati! Pengeluaran sudah mencapai 80% dari anggaran.")
-
-def rekomendasi_penghematan():
-    print("\n===== REKOMENDASI PENGHEMATAN =====")
-    
-    if not anggaran:
-        print("Belum ada data anggaran. Atur anggaran terlebih dahulu di Menu 3.")
-        return
-
-    pengeluaran_per_kategori = {}
-    for data in transaksi:
-        if data["jenis"] == "Pengeluaran":
-            kat = data["kategori"].lower()
-            pengeluaran_per_kategori[kat] = pengeluaran_per_kategori.get(kat, 0) + data["jumlah"]
-
-    ada_rekomendasi = False
-
-    for kategori, batas_anggaran in anggaran.items():
-        terpakai = pengeluaran_per_kategori.get(kategori, 0)
-        persentase = (terpakai / batas_anggaran) * 100 if batas_anggaran > 0 else 0
-
-        if persentase > 100:
-            sisa_over = terpakai - batas_anggaran
-            print(f"💡 [Kritis] Kategori '{kategori.capitalize()}' bocor {format_rupiah(sisa_over)}!")
-            print(f"   -> Tindakan: HENTIKAN pengeluaran untuk kategori ini segera atau alihkan sisa dana dari kategori lain.")
-            ada_rekomendasi = True
-        elif persentase >= 80:
-            print(f"💡 [Waspada] Kategori '{kategori.capitalize()}' sudah terpakai {persentase:.1f}%.")
-            print(f"   -> Tindakan: Batasi transaksi harian untuk kategori ini hingga akhir bulan agar tidak overbudget.")
-            ada_rekomendasi = True
-        elif persentase >= 50:
-            print(f"💡 [Info] Kategori '{kategori.capitalize()}' sudah berjalan setengah dari batas budget.")
-            print(f"   -> Tindakan: Pertahankan ritme belanja kamu saat ini. Jangan melakukan pembelian besar non-esensial.")
-            ada_rekomendasi = True
-
-    if not ada_rekomendasi:
-        print("✅ Pengeluaran kamu di semua kategori masih sangat aman dan terkontrol. Bagus, pertahankan!")
-
-def tambah_pemasukan():
-    tanggal = input("Tanggal (dd-mm-yyyy): ")
-    waktu = input("Waktu (HH:MM): ")
-    nominal = float(input("Nominal: "))
     kategori = input("Kategori: ")
-    keterangan = input("Keterangan: ")
+    deskripsi = input("Deskripsi: ")
+    transaksi = {
+        'tanggal': tanggal,
+        'jenis': jenis,
+        'jumlah': jumlah,
+        'kategori': kategori,
+        'deskripsi': deskripsi
+    }
+    data.append(transaksi)
+    save_data(data)
+    print(" Transaksi berhasil ditambahkan.")
 
-    transaksi.append({
-        "tanggal": tanggal,
-        "waktu": waktu,
-        "jenis": "Pemasukan",
-        "kategori": kategori,
-        "jumlah": nominal,
-        "keterangan": keterangan
-    })
-    print("Pemasukan berhasil ditambahkan!")
+def tampilkan_semua(data):
+    print("\n📄 Daftar Semua Transaksi:")
+    print(f"{'No':<3} {'Tanggal':<12} {'Jenis':<12} {'Jumlah':<10} {'Kategori':<15} Deskripsi")
+    for i, row in enumerate(data):
+        print(f"{i:<3} {row['tanggal']:<12} {row['jenis']:<12} Rp{row['jumlah']:<10} {row['kategori']:<15} {row['deskripsi']}")
 
-def tambah_pengeluaran():
-    tanggal = input("Tanggal (dd-mm-yyyy): ")
-    waktu = input("Waktu (HH:MM): ")
-    nominal = float(input("Nominal: "))
-    kategori = input("Kategori: ")
-    keterangan = input("Keterangan: ")
-
-    transaksi.append({
-        "tanggal": tanggal,
-        "waktu": waktu,
-        "jenis": "Pengeluaran",
-        "kategori": kategori,
-        "jumlah": nominal,
-        "keterangan": keterangan
-    })
-    print("Pengeluaran berhasil ditambahkan!")
-
-def lihat_saldo():
-    pemasukan = 0
-    pengeluaran = 0
-    for data in transaksi:
-        if data["jenis"] == "Pemasukan":
-            pemasukan += data["jumlah"]
-        else:
-            pengeluaran += data["jumlah"]
-
-    saldo = pemasukan - pengeluaran
-    print("\n=== SALDO ===")
-    print(f"Total Pemasukan   : {format_rupiah(pemasukan)}")
-    print(f"Total Pengeluaran : {format_rupiah(pengeluaran)}")
-    print(f"Saldo             : {format_rupiah(saldo)}")
-
-def rekap_bulanan():
-    print("\n===== RINGKASAN JUNI 2025 =====")
-    pemasukan = 0
-    pengeluaran = 0
-    kategori_total = {}
-
-    for data in transaksi:
-        if data["jenis"] == "Pemasukan":
-            pemasukan += data["jumlah"]
-        else:
-            pengeluaran += data["jumlah"]
-            kategori = data["kategori"]
-            kategori_total[kategori] = kategori_total.get(kategori, 0) + data["jumlah"]
-
-    saldo_akhir = pemasukan - pengeluaran
-    print(f"{'Total Pemasukan':<17} : {format_rupiah(pemasukan)}")
-    print(f"{'Total Pengeluaran':<17} : {format_rupiah(pengeluaran)}")
-    print(f"{'Saldo Akhir':<17} : {format_rupiah(saldo_akhir)}")
-
-    print("\nPengeluaran per Kategori:")
-    for kategori, total in kategori_total.items():
-        print(f"- {' '.join(word.capitalize() for word in kategori.split()):<9} : {format_rupiah(total)}")
-
-def grafik_ascii():
-    kategori_total = {}
-    for data in transaksi:
-        if data["jenis"] == "Pengeluaran":
-            kategori = data["kategori"]
-            kategori_total[kategori] = kategori_total.get(kategori, 0) + data["jumlah"]
-
-    print("\n===== GRAFIK PENGELUARAN =====")
-    if not kategori_total:
-        print("Belum ada data pengeluaran.")
+def update_transaksi(data):
+    tampilkan_semua(data)
+    try:
+        idx = int(input("Masukkan nomor transaksi yang ingin diubah: "))
+    except ValueError:
+        print(" Input harus berupa angka.")
         return
+    if 0 <= idx < len(data):
+        print("Masukkan data baru:")
+        data[idx]['tanggal'] = input("Tanggal (YYYY-MM-DD): ")
+        data[idx]['jenis'] = input("Jenis (pemasukan/pengeluaran): ")
+        try:
+            data[idx]['jumlah'] = int(input("Jumlah: "))
+        except ValueError:
+            print(" Jumlah harus berupa angka.")
+            return
+        data[idx]['kategori'] = input("Kategori: ")
+        data[idx]['deskripsi'] = input("Deskripsi: ")
+        save_data(data)
+        print(" Transaksi berhasil diupdate.")
+    else:
+        print(" Nomor transaksi tidak valid.")
 
-    maksimum = max(kategori_total.values())
-    for kategori, jumlah in kategori_total.items():
-        panjang = int((jumlah / maksimum) * 30) if maksimum > 0 else 0
-        batang = "█" * panjang
-        print(f"{kategori:<15} | {batang} {format_rupiah(jumlah)}")
+def hapus_transaksi(data):
+    tampilkan_semua(data)
+    try:
+        idx = int(input("Masukkan nomor transaksi yang ingin dihapus: "))
+    except ValueError:
+        print(" Input harus berupa angka.")
+        return
+    if 0 <= idx < len(data):
+        del data[idx]
+        save_data(data)
+        print("Transaksi berhasil dihapus.")
+    else:
+        print("Nomor transaksi tidak valid.")
 
-def rekomendasi():
-    pemasukan = 0
-    hiburan = 0
-    for data in transaksi:
-        if data["jenis"] == "Pemasukan":
-            pemasukan += data["jumlah"]
-        if data["jenis"] == "Pengeluaran" and data["kategori"].lower() == "hiburan":
-            hiburan += data["jumlah"]
+def menu():
+    data = load_data()
+    while True:
+        print("\n=== Aplikasi Keuangan Pribadi ===")
+        print("1. Tambah Transaksi")
+        print("2. Tampilkan Semua Transaksi")
+        print("3. Update Transaksi")
+        print("4. Hapus Transaksi")
+        print("0. Keluar")
+        pilihan = input("Pilih menu: ")
 
-    if pemasukan > 0:
-        persen = (hiburan / pemasukan) * 100
-        print(f"Hiburan = {persen:.2f}% dari pemasukan")
-        if persen > 20:
-            print("Saran: Kurangi pengeluaran hiburan.")
+        if pilihan == '1':
+            tambah_transaksi(data)
+        elif pilihan == '2':
+            tampilkan_semua(data)
+        elif pilihan == '3':
+            update_transaksi(data)
+        elif pilihan == '4':
+            hapus_transaksi(data)
+        elif pilihan == '0':
+            print(" Keluar dari program!")
+            break
         else:
-            print("Pengeluaran hiburan masih aman.")
-    else:
-        print("Belum ada data pemasukan.")
+            print(" Menu tidak valid.")
 
-def cari_transaksi():
-    kata = input("Masukkan kategori atau tanggal: ").lower()
-    print("\n=== HASIL PENCARIAN ===")
-    ditemukan = False
-    for data in transaksi:
-        if kata in data["kategori"].lower() or kata in data["tanggal"]:
-            print(f"{data['tanggal']} {data['waktu']} | {data['jenis']} | {data['kategori']} | {format_rupiah(data['jumlah'])}")
-            ditemukan = True
-    if not ditemukan:
-        print("Data tidak ditemukan.")
-
-while True:
-    print("\n===== MENU =====")
-    print("1. Tambah Pemasukan")
-    print("2. Tambah Pengeluaran")
-    print("3. Atur Anggaran Kategori")
-    print("4. Lihat Saldo")
-    print("5. Rekap Bulanan")
-    print("6. Grafik ASCII")
-    print("7. Rekomendasi Persentase")
-    print("8. Cari Transaksi")
-    print("9. Cek Anggaran")
-    print("10. Rekomendasi Penghematan")
-    print("11. Keluar")
-
-    pilih = input("Pilih Menu: ")
-
-    if pilih == "1":
-        tambah_pemasukan()
-    elif pilih == "2":
-        tambah_pengeluaran()
-    elif pilih == "3":
-        atur_anggaran()
-    elif pilih == "4":
-        lihat_saldo()
-    elif pilih == "5":
-        rekap_bulanan()
-    elif pilih == "6":
-        grafik_ascii()
-    elif pilih == "7":
-        rekomendasi()
-    elif pilih == "8":
-        cari_transaksi()
-    elif pilih == "9":
-        cek_anggaran()
-    elif pilih == "10":
-        rekomendasi_penghematan()
-    elif pilih == "11":
-        print("Program selesai.")
-        break
-    else:
-        print("Pilihan tidak valid!")
+if _name_ == "_main_":
+    menu()
