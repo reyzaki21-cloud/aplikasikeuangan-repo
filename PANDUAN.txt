@@ -1,0 +1,335 @@
+# 💰 Aplikasi Manajemen Keuangan Pribadi (CLI Python)
+
+## Deskripsi
+
+Aplikasi Manajemen Keuangan Pribadi merupakan program berbasis Python yang dijalankan melalui terminal (Command Line Interface/CLI). Program ini dibuat untuk membantu pengguna mencatat pemasukan dan pengeluaran, mengelola anggaran, melihat saldo, membuat rekap bulanan, menampilkan grafik pengeluaran, mencari transaksi, serta memberikan rekomendasi penghematan berdasarkan kondisi keuangan.
+
+Program ini dibuat sebagai tugas proyek mata kuliah Pemrograman Python.
+
+---
+
+## Fitur Program
+
+### 1. Tambah Pemasukan
+- Menambahkan data pemasukan.
+- Input:
+  - Tanggal
+  - Waktu
+  - Nominal
+  - Kategori
+  - Keterangan
+
+---
+
+### 2. Tambah Pengeluaran
+- Menambahkan data pengeluaran.
+- Input:
+  - Tanggal
+  - Waktu
+  - Nominal
+  - Kategori
+  - Keterangan
+
+---
+
+### 3. Atur Anggaran Kategori
+Digunakan untuk menentukan batas maksimal pengeluaran pada setiap kategori.
+
+Contoh:
+
+Kategori : Makanan
+
+Anggaran : Rp1.000.000
+
+---
+
+### 4. Lihat Saldo
+Menampilkan:
+
+- Total Pemasukan
+- Total Pengeluaran
+- Saldo Akhir
+
+---
+
+### 5. Rekap Bulanan
+
+Menampilkan laporan berupa:
+
+- Total pemasukan
+- Total pengeluaran
+- Saldo akhir
+- Pengeluaran berdasarkan kategori
+
+---
+
+### 6. Grafik ASCII
+
+Menampilkan grafik batang sederhana menggunakan karakter **█**.
+
+Contoh:
+
+```
+===== GRAFIK PENGELUARAN =====
+
+Makanan        | ██████████████████████ Rp500.000
+Transport      | ███████████ Rp250.000
+Hiburan        | ██████████████████████████ Rp700.000
+```
+
+---
+
+### 7. Rekomendasi Persentase
+
+Menghitung persentase pengeluaran kategori Hiburan terhadap total pemasukan.
+
+Jika pengeluaran hiburan melebihi 20% maka sistem memberikan peringatan.
+
+Contoh
+
+```
+Hiburan = 25.60% dari pemasukan
+
+Saran:
+Kurangi pengeluaran hiburan.
+```
+
+---
+
+### 8. Cari Transaksi
+
+Mencari transaksi berdasarkan:
+
+- kategori
+- tanggal
+
+Contoh
+
+```
+Masukkan kategori:
+
+makanan
+```
+
+Output
+
+```
+02-06-2025 12:30
+Pengeluaran
+Makanan
+Rp50.000
+```
+
+---
+
+### 9. Cek Anggaran
+
+Membandingkan total pengeluaran dengan batas anggaran.
+
+Status yang diberikan:
+
+- Aman
+- Hampir mencapai batas (≥80%)
+- Melebihi anggaran
+
+Contoh
+
+```
+Kategori : Makanan
+
+Anggaran : Rp1.000.000
+
+Terpakai : Rp850.000
+
+⚠ Hati-hati!
+Pengeluaran sudah mencapai 80% dari anggaran.
+```
+
+---
+
+### 10. Rekomendasi Penghematan
+
+Memberikan rekomendasi otomatis berdasarkan penggunaan anggaran.
+
+Status:
+
+- Info
+- Waspada
+- Kritis
+
+Contoh
+
+```
+💡 [Kritis]
+
+Kategori Hiburan telah melebihi anggaran.
+
+Saran:
+Hentikan pengeluaran pada kategori tersebut.
+```
+
+---
+
+### 11. Keluar
+
+Mengakhiri program.
+
+---
+
+# Struktur Program
+
+```
+Project
+│
+├── main.py
+├── README.md
+└── screenshot/
+```
+
+---
+
+# Cara Menjalankan Program
+
+1. Pastikan Python 3 sudah terinstall.
+
+2. Clone repository
+
+```
+git clone https://github.com/username/nama-repository.git
+```
+
+3. Masuk ke folder project
+
+```
+cd nama-repository
+```
+
+4. Jalankan program
+
+```
+python main.py
+```
+
+atau
+
+```
+python3 main.py
+```
+
+---
+
+# Menu Program
+
+```
+===== MENU =====
+
+1. Tambah Pemasukan
+
+2. Tambah Pengeluaran
+
+3. Atur Anggaran Kategori
+
+4. Lihat Saldo
+
+5. Rekap Bulanan
+
+6. Grafik ASCII
+
+7. Rekomendasi Persentase
+
+8. Cari Transaksi
+
+9. Cek Anggaran
+
+10. Rekomendasi Penghematan
+
+11. Keluar
+```
+
+---
+
+# Contoh Penggunaan
+
+## Menambahkan Pemasukan
+
+```
+Tanggal : 01-06-2025
+
+Waktu : 08:00
+
+Nominal : 5000000
+
+Kategori : Gaji
+
+Keterangan : Gaji Bulanan
+```
+
+---
+
+## Menambahkan Pengeluaran
+
+```
+Tanggal : 02-06-2025
+
+Waktu : 12:30
+
+Nominal : 50000
+
+Kategori : Makanan
+
+Keterangan : Makan Siang
+```
+
+---
+
+## Melihat Saldo
+
+```
+Total Pemasukan : Rp5.000.000
+
+Total Pengeluaran : Rp1.250.000
+
+Saldo : Rp3.750.000
+```
+
+---
+
+## Grafik Pengeluaran
+
+```
+Makanan        ███████████████████
+
+Transport      ██████████
+
+Hiburan        ████████████████████████
+```
+
+---
+
+# Teknologi yang Digunakan
+
+- Python 3
+- Command Line Interface (CLI)
+
+---
+
+# Konsep Pemrograman yang Digunakan
+
+- Function
+- List
+- Dictionary
+- Loop
+- Conditional (if-else)
+- Input dan Output
+- Perhitungan Matematika
+- String Formatting
+
+---
+
+# Pengembang
+
+Kelompok Proyek Python
+
+Mata Kuliah Pemrograman Python
+
+Universitas
